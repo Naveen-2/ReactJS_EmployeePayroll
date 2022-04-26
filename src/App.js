@@ -1,9 +1,14 @@
 
 import './App.css';
+import PayrollForm from './components/payroll-form/payroll-form'
+import Header from "./components/header/Header";
 
 function App() {
   return (
-    <h1>Hello World</h1>
+    <div className='App'>
+      <Header />
+      <PayrollForm />
+    </div>
   );
 }
 
