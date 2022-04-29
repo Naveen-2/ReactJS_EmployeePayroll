@@ -1,10 +1,62 @@
-import React from "react";
+import React, {useState} from "react";
 import './payroll-form.css';
 import ProfilePic1 from '../../assets/profile-images/Ellipse -1.png';
 import ProfilePic2 from '../../assets/profile-images/Ellipse -2.png';
 import ProfilePic3 from '../../assets/profile-images/Ellipse -3.png';
 import ProfilePic4 from '../../assets/profile-images/Ellipse -4.png';
-export default function PayrollForm () {
+import {Link} from "react-router-dom";
+
+function PayrollForm() {
+
+    let initialValue = {
+        name: '',
+        profilePicArray: [
+            {url: ProfilePic1},
+            {url: ProfilePic2},
+            {url: ProfilePic3},
+            {url: ProfilePic4}
+        ],
+        allDepartments: ['HR', 'Sales', 'Finance', 'Engineer', 'Others'],
+        departmentValue: [],
+        gender: '',
+        salary: '',
+        day: '1',
+        month: 'Jan',
+        year: '2021',
+        notes: '',
+        startDate: '',
+        id: '',
+        profileURL: '',
+        isUpdate: false
+    }
+
+    const [formValue, setForm] = useState(initialValue);
+    
+    const changeValue = (event) => {
+        setForm({...formValue, [event.target.name]: event.target.value})
+    }
+ 
+    const onCheckChange = (name) => {
+        let index = formValue.departmentValue.indexOf(name);
+        let checkArray = [...formValue.departmentValue];
+        if (index > -1) {
+            checkArray.splice(index, 1);
+        }
+        else {
+            checkArray.push(name);
+        }
+        setForm({...formValue, departmentValue: checkArray})
+    }
+ 
+    const getChecked = (name) => {
+        return formValue.departmentValue && formValue.departmentValue.includes(name);
+    }
+ 
+    function save(event) {
+        event.preventDefault();
+        console.log(formValue);
+    }
+    
     return (
         
         <div className="form-content">
@@ -13,71 +65,73 @@ export default function PayrollForm () {
                 <div className="form-head">Employee Payroll Form</div>
                 <div className="row-content">
                     <label htmlFor="name" className="label text">Name</label>
-                    <input type="text" name="name" id="name" className="input" placeholder="Your Name ..." required />
+                    <input type="text" name="name" id="name" className="input" value={formValue.name} placeholder="Your Name ..." onChange={changeValue} required />
                 </div>
 
                 <div className="row-content">
-                    <label className="label text" htmlFor="profile">Profile image</label>
-                    <div className="profile-radio-content">
-                        <label>
-                            <input type="radio" id="profile2" name="profile" value="..\assets\profile-images/Ellipse -1.png"
-                                required />
-                            <img className="profile" id="image1" src={ProfilePic1} alt=""/>
-                        </label>
-                        <label>
-                            <input type="radio" id="profile2" name="profile" value="..\assets\profile-images/Ellipse -2.png"
-                                required />
-                            <img className="profile" id="image2" src={ProfilePic2} alt=""/>
-                        </label>
-                        <label>
-                            <input type="radio" id="profile3" name="profile" value="../assets/profile-images/Ellipse -3.png"
-                                required />
-                            <img className="profile" id="image3" src={ProfilePic3} alt=""/>
-                        </label>
-                        <label>
-                            <input type="radio" id="profile4" name="profile" value="..\assets\profile-images/Ellipse -4.png"
-                                required />
-                            <img className="profile" id="image4" src={ProfilePic4} alt=""/>
-                        </label>
-                    </div>
-                </div>
+                   <label className="label text" htmlFor="profile">Profile image</label>
+                   <div className="profile-radio-content">
+                       <label>
+                           <input type="radio" id="profile1" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -1.png'}
+                                  value="../../assets/profile-images/Ellipse -1.png" onChange={changeValue}
+                                  required />
+                           <img className="profile" id="image1" src={ProfilePic1} alt=""/>
+                       </label>
+                       <label>
+                           <input type="radio" id="profile2" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -2.png'}
+                                  value="../../assets/profile-images/Ellipse -2.png" onChange={changeValue}
+                                  required />
+                           <img className="profile" id="image2" src={ProfilePic2} alt=""/>
+                       </label>
+                       <label>
+                           <input type="radio" id="profile3" name="profileURL"checked={formValue.profileURL==='../../assets/profile-images/Ellipse -3.png'}
+                                  value="../../assets/profile-images/Ellipse -3.png" onChange={changeValue}
+                                  required />
+                           <img className="profile" id="image3" src={ProfilePic3} alt=""/>
+                       </label>
+                       <label>
+                           <input type="radio" id="profile4" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -4.png'}
+                                  value="../../assets/profile-images/Ellipse -4.png" onChange={changeValue}
+                                  required />
+                           <img className="profile" id="image4" src={ProfilePic4} alt=""/>
+                       </label>
+                   </div>
+               </div>
 
                 <div className="row-content">
                     <label className="label text" htmlFor="gender">Gender</label>
                     <div>
-                        <input type="radio" id="male" name="gender" value="male" />
+                        <input type="radio" id="male" name="gender" value="male" onChange={changeValue} required/>
                         <label className="text" htmlFor="male">Male</label>
-                        <input type="radio" id="female" name="gender" value="female" />
+                        <input type="radio" id="female" name="gender" value="female" onChange={changeValue} required/>
                         <label className="text" htmlFor="female">Female</label>
                     </div>
                 </div>
 
                 <div className="row-content">
-                    <label className="label text" htmlFor="department">Department</label>
-                    <div>
-                        <input className="checkbox" type="checkbox" id="hr" name="hr" value="HR" />
-                        <label className="text" htmlFor="hr">HR</label>
-                        <input className="checkbox" type="checkbox" id="sales" name="sales" value="Sales" />
-                        <label className="text" htmlFor="sales">Sales</label>
-                        <input className="checkbox" type="checkbox" id="finance" name="finance" value="Finance" />
-                        <label className="text" htmlFor="finance">Finance</label>
-                        <input className="checkbox" type="checkbox" id="engineer" name="engineer" value="Engineer" />
-                        <label className="text" htmlFor="engineer">Engineer</label>
-                        <input className="checkbox" type="checkbox" id="others" name="others" value="Others" />
-                        <label className="text" htmlFor="others">Others</label>
-                    </div>
-                </div>
+                   <label className="label text" htmlFor="department">Department</label>
+                   <div>
+                       {formValue.allDepartments.map(item => (
+                           <span key={item}>
+                                <input className="checkbox" type="checkbox" onChange={() => onCheckChange(item)} name={item}
+                                 defaultChecked={() => getChecked(item)} value={item} />
+                               <label className="text" htmlFor={item}>{item}</label>
+                           </span>
+                       ))}
+                   </div>
+               </div>
 
                 <div className="row-content">
                     <label className="label text" htmlFor="salary">Choose Your Salary: </label>
-                    <input className="input" type="range" name="salary" id="salary" min="300000" max="500000" step="100" value="400000" />
-                    <output className="salary-output text" htmlFor="salary">400000</output>
+                    <input className="input" type="range" name="salary" id="salary" min="300000" max="500000" step="100" 
+                            value={formValue.salary} onChange={changeValue}/>
+                    <output className="salary-output text" htmlFor="salary">{formValue.salary}</output>
                 </div>
 
                 <div className="row-content">
                     <label className="label text" htmlFor="startDate">Start Date</label>
                     <div>
-                        <select id="day" name="Day">
+                        <select id="day" name="Day" onChange={changeValue} value={formValue.day}>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -110,7 +164,7 @@ export default function PayrollForm () {
                             <option value="30">30</option>
                             <option value="31">31</option>
                         </select>
-                        <select id="month" name="Month">
+                        <select id="month" name="month" onChange={changeValue} value={formValue.month}>
                             <option value="0">January</option>
                             <option value="1">February</option>
                             <option value="2">March</option>
@@ -124,7 +178,7 @@ export default function PayrollForm () {
                             <option value="10">November</option>
                             <option value="11">December</option>
                         </select>
-                        <select id="year" name="Year">
+                        <select id="year" name="year" onChange={changeValue} value={formValue.year}>
                             <option value="2021">2021</option>
                             <option value="2020">2020</option>
                             <option value="2019">2019</option>
@@ -137,26 +191,21 @@ export default function PayrollForm () {
 
                 <div className="row-content">
                     <label className="label text" htmlFor="notes">Notes</label>
-                    <textarea id="notes" className="input" name="Notes" placeholder=""></textarea>
+                    <textarea id="notes" className="input" name="Notes" placeholder=""
+                                onChange={changeValue}></textarea>
                 </div>
 
                 <div className="buttonParent">
-                    <a href="EmployeePayroll.html" className="resetButton button cancelButton">Cancel</a>
-                    <div className="submit-reset">
-                        <button type="submit" className="button submitButton" onSubmit={save} id="submitButton">Submit</button>
-                        <button type="reset" className="resetButton button" onClick={reset}>Reset</button>
-                    </div>
-                </div>
+                   <Link to="/payroll-dashboard" className="resetButton button cancelButton">Cancel</Link>
+                   <div className="submit-reset">
+                       <button type="submit" className="button submitButton" id="submitButton">{formValue.isUpdate ? 'Update' : 'Submit'}</button>
+                       <button type="reset" className="resetButton button">Reset</button>
+                   </div>
+               </div>
 
             </form>
         </div>
     )
 }
 
-function save() {
-
-}
-
-function reset() {
-    
-}
+export default PayrollForm;
