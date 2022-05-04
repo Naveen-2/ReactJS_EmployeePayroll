@@ -1,0 +1,20 @@
+{
+  "employee": [
+    {
+      "name": "selvifireworks",
+      "gender": "Female",
+      "departMent": [
+        "Sales"
+      ],
+      "salary": "320000",
+      "startDate": "1 Jul 2021",
+      "day": "1",
+      "month": "Jul",
+      "year": "2021",
+      "notes": "",
+      "id": 1651642998920,
+      "profileUrl": "../../assets/profile-images/Ellipse -1.png",
+      "isUpdate": false
+    }
+  ]
+}

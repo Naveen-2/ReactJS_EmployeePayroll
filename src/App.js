@@ -13,7 +13,7 @@ function App() {
       <Router>
         <div className="App">
               <Switch>
-                  <Route exact path="/payroll-dashboard" component={PayrollDashboard}/>
+                  <Route exact path="/" component={PayrollDashboard}/>
                   <Route exact path="/payroll-form" component={PayrollForm}/>
               </Switch>
         </div>

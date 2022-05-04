@@ -5,8 +5,9 @@ import ProfilePic2 from '../../assets/profile-images/Ellipse -2.png';
 import ProfilePic3 from '../../assets/profile-images/Ellipse -3.png';
 import ProfilePic4 from '../../assets/profile-images/Ellipse -4.png';
 import {Link} from "react-router-dom";
+import EmployeeService from "../../service/employee-service";
 
-function PayrollForm() {
+const PayrollForm = (props) => {
 
     let initialValue = {
         name: '',
@@ -25,13 +26,34 @@ function PayrollForm() {
         year: '2021',
         notes: '',
         startDate: '',
-        id: '',
+        id: Date.now(),
         profileURL: '',
         isUpdate: false
     }
 
     const [formValue, setForm] = useState(initialValue);
-    
+
+    if(props.history.location.state !== undefined){
+        let employeeData= props.history.location.state.employeeData;
+        
+        console.log(employeeData)
+        console.log(employeeData.departMent);
+        formValue.name = employeeData.name;
+        formValue.gender = employeeData.gender;
+        formValue.departmentValue = employeeData.departMent;
+        formValue.salary = employeeData.salary;
+        formValue.startDate = employeeData.startDate;
+        formValue.day = employeeData.day;
+        formValue.month = employeeData.month;
+        formValue.year = employeeData.year;
+        formValue.notes = employeeData.notes;
+        formValue.id = employeeData.id;
+        formValue.isUpdate = true;
+        formValue.profileURL = employeeData.profileUrl;
+        console.log(formValue)
+    }
+        
+
     const changeValue = (event) => {
         setForm({...formValue, [event.target.name]: event.target.value})
     }
@@ -52,9 +74,27 @@ function PayrollForm() {
         return formValue.departmentValue && formValue.departmentValue.includes(name);
     }
  
-    function save(event) {
+    const save = async (event) => {
         event.preventDefault();
-        console.log(formValue);
+        let Object = {
+            name: formValue.name,
+            gender: formValue.gender,
+            departMent: formValue.departmentValue,
+            salary: formValue.salary,
+            startDate: `${formValue.day} ${formValue.month} ${formValue.year}`,
+            day: formValue.day,
+            month: formValue.month,
+            year: formValue.year,
+            notes: formValue.notes,
+            id: formValue.id,
+            profileUrl: formValue.profileURL,
+            isUpdate: formValue.isUpdate
+        }
+        
+        const response = await EmployeeService.addEmployee(Object).then(() => {
+            console.log("data added successfully");
+            props.history.push('');
+        });
     }
     
     return (
@@ -101,9 +141,9 @@ function PayrollForm() {
                 <div className="row-content">
                     <label className="label text" htmlFor="gender">Gender</label>
                     <div>
-                        <input type="radio" id="male" name="gender" value="male" onChange={changeValue} required/>
+                        <input type="radio" id="male" name="gender" value="Male" checked={formValue.gender==="Male"} onChange={changeValue} required/>
                         <label className="text" htmlFor="male">Male</label>
-                        <input type="radio" id="female" name="gender" value="female" onChange={changeValue} required/>
+                        <input type="radio" id="female" name="gender" value="Female" checked={formValue.gender==="Female"} onChange={changeValue} required/>
                         <label className="text" htmlFor="female">Female</label>
                     </div>
                 </div>
@@ -124,8 +164,8 @@ function PayrollForm() {
                 <div className="row-content">
                     <label className="label text" htmlFor="salary">Choose Your Salary: </label>
                     <input className="input" type="range" name="salary" id="salary" min="300000" max="500000" step="100" 
-                            value={formValue.salary} onChange={changeValue}/>
-                    <output className="salary-output text" htmlFor="salary">{formValue.salary}</output>
+                            value={formValue.salary==="" ? "300000" : formValue.salary} onChange={changeValue}/>
+                    <output className="salary-output text" htmlFor="salary">{formValue.salary==="" ? 300000 : formValue.salary}</output>
                 </div>
 
                 <div className="row-content">
@@ -165,18 +205,18 @@ function PayrollForm() {
                             <option value="31">31</option>
                         </select>
                         <select id="month" name="month" onChange={changeValue} value={formValue.month}>
-                            <option value="0">January</option>
-                            <option value="1">February</option>
-                            <option value="2">March</option>
-                            <option value="3">April</option>
-                            <option value="4">May</option>
-                            <option value="5">June</option>
-                            <option value="6">July</option>
-                            <option value="7">August</option>
-                            <option value="8">September</option>
-                            <option value="9">October</option>
-                            <option value="10">November</option>
-                            <option value="11">December</option>
+                            <option value="Jan">January</option>
+                            <option value="Feb">February</option>
+                            <option value="Mar">March</option>
+                            <option value="Apr">April</option>
+                            <option value="May">May</option>
+                            <option value="Jun">June</option>
+                            <option value="Jul">July</option>
+                            <option value="Aug">August</option>
+                            <option value="Sep">September</option>
+                            <option value="Oct">October</option>
+                            <option value="Nov">November</option>
+                            <option value="Dec">December</option>
                         </select>
                         <select id="year" name="year" onChange={changeValue} value={formValue.year}>
                             <option value="2021">2021</option>
@@ -192,11 +232,11 @@ function PayrollForm() {
                 <div className="row-content">
                     <label className="label text" htmlFor="notes">Notes</label>
                     <textarea id="notes" className="input" name="Notes" placeholder=""
-                                onChange={changeValue}></textarea>
+                               onChange={changeValue}></textarea>
                 </div>
 
                 <div className="buttonParent">
-                   <Link to="/payroll-dashboard" className="resetButton button cancelButton">Cancel</Link>
+                   <Link to="/" className="resetButton button cancelButton">Cancel</Link>
                    <div className="submit-reset">
                        <button type="submit" className="button submitButton" id="submitButton">{formValue.isUpdate ? 'Update' : 'Submit'}</button>
                        <button type="reset" className="resetButton button">Reset</button>
