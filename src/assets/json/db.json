@@ -1,18 +1,105 @@
 {
   "employee": [
     {
-      "name": "selvifireworks",
-      "gender": "Female",
-      "departMent": [
-        "Sales"
+      "name": "testdeliveryan",
+      "gender": "Male",
+      "departmentValue": [
+        "Sales",
+        "Finance",
+        "Engineer"
       ],
-      "salary": "320000",
-      "startDate": "1 Jul 2021",
+      "salary": "365200",
+      "startDate": "1 Jul 2017",
       "day": "1",
       "month": "Jul",
-      "year": "2021",
+      "year": "2017",
       "notes": "",
-      "id": 1651642998920,
+      "id": 1651689859115,
+      "profileUrl": "../../assets/profile-images/Ellipse -4.png",
+      "isUpdate": true
+    },
+    {
+      "name": "Grace Family Restaurant",
+      "gender": "Female",
+      "departmentValue": [
+        "HR"
+      ],
+      "salary": "407900",
+      "startDate": "2 May 2018",
+      "day": "2",
+      "month": "May",
+      "year": "2018",
+      "notes": "asxdcASDF",
+      "id": 1651692016181,
+      "profileUrl": "../../assets/profile-images/Ellipse -4.png",
+      "isUpdate": true
+    },
+    {
+      "name": "Asdf",
+      "gender": "Female",
+      "departmentValue": [
+        "Others",
+        "Engineer"
+      ],
+      "salary": "435600",
+      "startDate": "6 Jun 2021",
+      "day": "6",
+      "month": "Jun",
+      "year": "2021",
+      "notes": "gud",
+      "id": 1651811227138,
+      "profileUrl": "../../assets/profile-images/Ellipse -1.png",
+      "isUpdate": false
+    },
+    {
+      "name": "Naveen",
+      "gender": "Male",
+      "departmentValue": [
+        "Engineer",
+        "Finance"
+      ],
+      "salary": "329400",
+      "startDate": "4 Oct 2019",
+      "day": "4",
+      "month": "Oct",
+      "year": "2019",
+      "notes": "tesst notes here",
+      "id": 1653885964242,
+      "profileUrl": "../../assets/profile-images/Ellipse -2.png",
+      "isUpdate": false
+    },
+    {
+      "name": "NAVEEN",
+      "gender": "Male",
+      "departmentValue": [
+        "Sales",
+        "Finance",
+        "Engineer"
+      ],
+      "salary": "341100",
+      "startDate": "4 Apr 2019",
+      "day": "4",
+      "month": "Apr",
+      "year": "2019",
+      "notes": "dfbx sgh sedrg sdfg ",
+      "id": 1655270076600,
+      "profileUrl": "../../assets/profile-images/Ellipse -3.png",
+      "isUpdate": false
+    },
+    {
+      "name": "Aasd asdf",
+      "gender": "Female",
+      "departmentValue": [
+        "Sales",
+        "Finance"
+      ],
+      "salary": "343100",
+      "startDate": "1 Feb 2021",
+      "day": "1",
+      "month": "Feb",
+      "year": "2021",
+      "notes": "asd",
+      "id": 1655270172623,
       "profileUrl": "../../assets/profile-images/Ellipse -1.png",
       "isUpdate": false
     }

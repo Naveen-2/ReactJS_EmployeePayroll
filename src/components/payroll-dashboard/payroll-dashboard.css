@@ -98,6 +98,7 @@ td {
 td:first-child {
     display: flex;
     align-items: center;
+    margin-left: 10px;
 }
 
 td img:first-child {

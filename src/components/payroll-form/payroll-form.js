@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import './payroll-form.css';
 import ProfilePic1 from '../../assets/profile-images/Ellipse -1.png';
 import ProfilePic2 from '../../assets/profile-images/Ellipse -2.png';
@@ -18,83 +18,159 @@ const PayrollForm = (props) => {
             {url: ProfilePic4}
         ],
         allDepartments: ['HR', 'Sales', 'Finance', 'Engineer', 'Others'],
-        departmentValue: [],
+        department: [],
         gender: '',
         salary: '',
         day: '1',
         month: 'Jan',
         year: '2021',
-        notes: '',
-        startDate: '',
+        note: '',
+        startDate: '01 Jan 2021',
         id: Date.now(),
-        profileURL: '',
-        isUpdate: false
+        profilePic: '',
+        isUpdate: false,
+        error: {
+            name: '',
+            profilePic: '',
+            gender: '',
+            department: '',
+            salary: '',
+            startDate: ''
+        }
     }
 
     const [formValue, setForm] = useState(initialValue);
+ 
 
-    if(props.history.location.state !== undefined){
-        let employeeData= props.history.location.state.employeeData;
-        
-        console.log(employeeData)
-        console.log(employeeData.departMent);
-        formValue.name = employeeData.name;
-        formValue.gender = employeeData.gender;
-        formValue.departmentValue = employeeData.departMent;
-        formValue.salary = employeeData.salary;
-        formValue.startDate = employeeData.startDate;
-        formValue.day = employeeData.day;
-        formValue.month = employeeData.month;
-        formValue.year = employeeData.year;
-        formValue.notes = employeeData.notes;
-        formValue.id = employeeData.id;
-        formValue.isUpdate = true;
-        formValue.profileURL = employeeData.profileUrl;
-        console.log(formValue)
+    const setData = (obj) => {
+        let dateArray = obj.startDate;
+        console.log(obj);
+        setForm({
+            ...formValue,
+            ...obj,
+            name: obj.name,
+            profilePic: obj.profilePic,
+            gender: obj.gender,
+            department: obj.department,
+            salary: obj.salary,
+            day:dateArray[8]+dateArray[9],
+            month:dateArray[5]+dateArray[6],
+            year:dateArray[0]+dateArray[1]+dateArray[2]+dateArray[3],
+            note: obj.note,
+            isUpdate: true,
+            startDate: obj.startDate,
+            
+        });
+        formValue.department.map(item => {
+            getChecked(item);
+        })
     }
-        
+       
+    console.log(formValue)
 
     const changeValue = (event) => {
         setForm({...formValue, [event.target.name]: event.target.value})
     }
  
     const onCheckChange = (name) => {
-        let index = formValue.departmentValue.indexOf(name);
-        let checkArray = [...formValue.departmentValue];
+        let index = formValue.department.indexOf(name);
+        let checkArray = [...formValue.department];
         if (index > -1) {
             checkArray.splice(index, 1);
         }
         else {
             checkArray.push(name);
         }
-        setForm({...formValue, departmentValue: checkArray})
+        setForm({...formValue, department: checkArray})
     }
  
     const getChecked = (name) => {
-        return formValue.departmentValue && formValue.departmentValue.includes(name);
+        return formValue.department && formValue.department.includes(name);
     }
  
+    useEffect(() => {
+        if(props.history.location.state)
+            setData(props.history.location.state.employeeData);
+        
+    }, []);
+
+    const validateData = async () => {
+        let isError = false;
+        let error = {
+            department: '',
+            name: '',
+            gender: '',
+            salary: '',
+            profilePic: '',
+            note:''
+        }
+        if (!formValue.name.match('^[A-Z]{1}[a-zA-Z\\s]{2,}$')) {
+            error.name = 'Invalid NAME'
+            isError = true;
+        }
+        if (formValue.gender.length < 1) {
+            error.gender = 'Select GENDER'
+            isError = true;
+        }
+        if (formValue.salary.length < 1) {
+            error.salary = 'Required SALARY'
+            isError = true;
+        }
+        if (formValue.profilePic.length < 1) {
+            error.profilePic = 'Select PROFILE PIC'
+            isError = true;
+        }
+        if (formValue.department.length < 1) {
+            error.department = 'Select DEPARTMENT'
+            isError = true;
+        }
+        if (formValue.note.length < 1){
+            error.note = "Required NOTES"
+            isError = true;
+        }
+        setForm({ ...formValue, error: error })
+        return isError;
+    }
+
+    const reset = () => {
+        setForm({...initialValue, id: formValue.id, isUpdate: formValue.isUpdate});
+    }
+
     const save = async (event) => {
         event.preventDefault();
+        if (await validateData()) {
+            return;
+        }
         let Object = {
             name: formValue.name,
             gender: formValue.gender,
-            departMent: formValue.departmentValue,
+            department: formValue.department,
             salary: formValue.salary,
             startDate: `${formValue.day} ${formValue.month} ${formValue.year}`,
-            day: formValue.day,
-            month: formValue.month,
-            year: formValue.year,
-            notes: formValue.notes,
-            id: formValue.id,
-            profileUrl: formValue.profileURL,
-            isUpdate: formValue.isUpdate
+            note: formValue.note,
+            profilePic: formValue.profilePic
+        }
+        if(props.history.location.state){
+            Object.employeeId = props.history.location.state.employeeData.employeeId;
+            const response = await EmployeeService.editEmployee(Object).then(() => {
+                console.log("data edited successfully");
+                props.history.push('');
+            });
+        } else {
+            const response = await EmployeeService.addEmployee(Object).then(() => {
+                console.log("data added successfully");
+                props.history.push('');
+            });
         }
         
-        const response = await EmployeeService.addEmployee(Object).then(() => {
-            console.log("data added successfully");
-            props.history.push('');
-        });
+    }
+
+    const updateEmployee = async (id) => {
+        const response = await EmployeeService.editEmployee(id);
+        // console.log(response);
+        
+        // console.log(response);
+        return response;
     }
     
     return (
@@ -106,36 +182,38 @@ const PayrollForm = (props) => {
                 <div className="row-content">
                     <label htmlFor="name" className="label text">Name</label>
                     <input type="text" name="name" id="name" className="input" value={formValue.name} placeholder="Your Name ..." onChange={changeValue} required />
+                    <div className="error" > {formValue.error.name}</div>
                 </div>
 
                 <div className="row-content">
                    <label className="label text" htmlFor="profile">Profile image</label>
                    <div className="profile-radio-content">
                        <label>
-                           <input type="radio" id="profile1" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -1.png'}
+                           <input type="radio" id="profile1" name="profilePic" checked={formValue.profilePic==='../../assets/profile-images/Ellipse -1.png'}
                                   value="../../assets/profile-images/Ellipse -1.png" onChange={changeValue}
                                   required />
                            <img className="profile" id="image1" src={ProfilePic1} alt=""/>
                        </label>
                        <label>
-                           <input type="radio" id="profile2" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -2.png'}
+                           <input type="radio" id="profile2" name="profilePic" checked={formValue.profilePic==='../../assets/profile-images/Ellipse -2.png'}
                                   value="../../assets/profile-images/Ellipse -2.png" onChange={changeValue}
                                   required />
                            <img className="profile" id="image2" src={ProfilePic2} alt=""/>
                        </label>
                        <label>
-                           <input type="radio" id="profile3" name="profileURL"checked={formValue.profileURL==='../../assets/profile-images/Ellipse -3.png'}
+                           <input type="radio" id="profile3" name="profilePic"checked={formValue.profilePic==='../../assets/profile-images/Ellipse -3.png'}
                                   value="../../assets/profile-images/Ellipse -3.png" onChange={changeValue}
                                   required />
                            <img className="profile" id="image3" src={ProfilePic3} alt=""/>
                        </label>
                        <label>
-                           <input type="radio" id="profile4" name="profileURL" checked={formValue.profileURL==='../../assets/profile-images/Ellipse -4.png'}
+                           <input type="radio" id="profile4" name="profilePic" checked={formValue.profilePic==='../../assets/profile-images/Ellipse -4.png'}
                                   value="../../assets/profile-images/Ellipse -4.png" onChange={changeValue}
                                   required />
                            <img className="profile" id="image4" src={ProfilePic4} alt=""/>
                        </label>
                    </div>
+                   <div className="error"> {formValue.error.profilePic}</div>
                </div>
 
                 <div className="row-content">
@@ -146,6 +224,7 @@ const PayrollForm = (props) => {
                         <input type="radio" id="female" name="gender" value="Female" checked={formValue.gender==="Female"} onChange={changeValue} required/>
                         <label className="text" htmlFor="female">Female</label>
                     </div>
+                    <div className="error"> {formValue.error.gender}</div>
                 </div>
 
                 <div className="row-content">
@@ -154,11 +233,12 @@ const PayrollForm = (props) => {
                        {formValue.allDepartments.map(item => (
                            <span key={item}>
                                 <input className="checkbox" type="checkbox" onChange={() => onCheckChange(item)} name={item}
-                                 defaultChecked={() => getChecked(item)} value={item} />
+                                 checked={getChecked(item)} value={item} />
                                <label className="text" htmlFor={item}>{item}</label>
                            </span>
                        ))}
                    </div>
+                   <div className="error"> {formValue.error.department}</div>
                </div>
 
                 <div className="row-content">
@@ -166,21 +246,22 @@ const PayrollForm = (props) => {
                     <input className="input" type="range" name="salary" id="salary" min="300000" max="500000" step="100" 
                             value={formValue.salary==="" ? "300000" : formValue.salary} onChange={changeValue}/>
                     <output className="salary-output text" htmlFor="salary">{formValue.salary==="" ? 300000 : formValue.salary}</output>
+                    <div className="error"> {formValue.error.salary}</div>
                 </div>
 
                 <div className="row-content">
                     <label className="label text" htmlFor="startDate">Start Date</label>
                     <div>
-                        <select id="day" name="Day" onChange={changeValue} value={formValue.day}>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
+                        <select id="day" name="day" onChange={changeValue} value={formValue.day}>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                            <option value="06">6</option>
+                            <option value="07">7</option>
+                            <option value="08">8</option>
+                            <option value="09">9</option>
                             <option value="10">10</option>
                             <option value="11">11</option>
                             <option value="12">12</option>
@@ -227,19 +308,21 @@ const PayrollForm = (props) => {
                             <option value="2016">2016</option>
                         </select>
                     </div>
+                    <div className="error">{formValue.error.startDate}</div>
                 </div>
 
                 <div className="row-content">
-                    <label className="label text" htmlFor="notes">Notes</label>
-                    <textarea id="notes" className="input" name="Notes" placeholder=""
-                               onChange={changeValue}></textarea>
+                    <label className="label text" htmlFor="note">Notes</label>
+                    <textarea id="note" className="input" name="note" placeholder=""
+                              value={formValue.note} onChange={changeValue}></textarea>
+                    <div className="error">{formValue.error.note}</div>
                 </div>
 
                 <div className="buttonParent">
                    <Link to="/" className="resetButton button cancelButton">Cancel</Link>
                    <div className="submit-reset">
                        <button type="submit" className="button submitButton" id="submitButton">{formValue.isUpdate ? 'Update' : 'Submit'}</button>
-                       <button type="reset" className="resetButton button">Reset</button>
+                       <button type="reset" className="resetButton button" onClick={reset}>Reset</button>
                    </div>
                </div>
 

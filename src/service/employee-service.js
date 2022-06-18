@@ -4,11 +4,12 @@ import axios from 'axios';
 class EmployeeService {
     baseURL = config.baseURL;
     addEmployee = (data) => {
-        if(data.isUpdate){
-            return axios.post(`${this.baseURL}employee/${data.id}`);
-        } else {
-        return axios.post(`${this.baseURL}employee`, data);
-        }
+        // if(data.isUpdate){
+        //     return axios.put(`${this.baseURL}employee/${data.id}`, data);
+        // } else {
+            
+        return axios.post(`${this.baseURL}employee/create`, data);
+        // }
     }
 
     getEmployee = () => {
@@ -16,11 +17,12 @@ class EmployeeService {
     }
 
     deleteEmployee = (id) => {
-        return axios.delete(`${this.baseURL}employee/${id}`);
+        return axios.delete(`${this.baseURL}employee/delete/${id}`);
     } 
 
-    editEmployee = (id) => {
-        return axios.get(`${this.baseURL}employee/${id}`);
+    editEmployee = (data) => {
+        console.log(data);
+        return axios.put(`${this.baseURL}employee/update/${data.employeeId}`, data);
     }
 }
 

@@ -59,6 +59,14 @@ label {
     resize: vertical;
 }
 
+.error {
+    margin-left: 10px;
+    font-size: 12px;
+    font-style: italic;
+    color: red;
+}
+
+
 .profile-radio-content {
     display: flex;
     flex-direction: row;
